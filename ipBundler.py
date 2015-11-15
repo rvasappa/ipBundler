@@ -3,49 +3,53 @@
 import sys
 from PyQt4 import QtGui, QtCore
 
-data = [
-    ("Alice", [
-        ("Keys", []),
-        ("Purse", [
-            ("Cellphone", [])
-            ])
-        ]),
-    ("Bob", [
-        ("Wallet", [
-            ("Credit card", []),
-            ("Money", [])
-            ])
-        ])
-    ]
 
 
-class MainForm(QtGui.QMainWindow):
+class MyWindow(QtGui.QWidget):
     def __init__(self, parent=None):
-        super(MainForm, self).__init__(parent)
-        self.model = QtGui.QStandardItemModel()
-        self.model.setHorizontalHeaderLabels([self.tr("Contents")])
-        """
-        Idea is to add a json stream here
-        """
-        self.addItems(self.model, data)
+        super(MyWindow, self).__init__(parent)
+        self.model = QtGui.QFileSystemModel(self)
+        path = "/home/raghuram002/development/src/code"
+        self.model.setRootPath(path)
+        self.model.setReadOnly(False)
+        self.indexRoot = self.model.index(self.model.rootPath())
+        self.treeView = QtGui.QTreeView(self)
+        self.treeView.setModel(self.model)
+        self.treeView.setRootIndex(self.indexRoot)
+        self.treeView.clicked.connect(self.on_treeView_clicked)
+        self.treeView.setDragEnabled(True)
+        self.treeView.setAcceptDrops(True)
+        self.treeView.setDropIndicatorShown(True)
+        self.treeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
+        self.treeView.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.treeView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.treeView.customContextMenuRequested.connect(self.openMenu)
+        
+        self.labelFileName = QtGui.QLabel(self)
+        self.labelFileName.setText("File Name:")
 
+        self.lineEditFileName = QtGui.QLineEdit(self)
 
-        self.view = QtGui.QTreeView()
-        self.view.setModel(self.model)
-        self.view.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
-        self.setCentralWidget(self.view)
-        self.view.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.view.customContextMenuRequested.connect(self.openMenu)
-       
-    def addItems(self, parent, elements):
-        for text, children in elements:
-            item = QtGui.QStandardItem(text)
-            parent.appendRow(item)
-            if children:
-                self.addItems(item, children)
+        self.labelFilePath = QtGui.QLabel(self)
+        self.labelFilePath.setText("File Path:")
+
+        self.lineEditFilePath = QtGui.QLineEdit(self)
+
+        self.gridLayout = QtGui.QGridLayout()
+        self.gridLayout.addWidget(self.labelFileName, 0, 0)
+        self.gridLayout.addWidget(self.lineEditFileName, 0, 1)
+        self.gridLayout.addWidget(self.labelFilePath, 1, 0)
+        self.gridLayout.addWidget(self.lineEditFilePath, 1, 1)
+        self.layout = QtGui.QVBoxLayout(self)
+        self.layout.addLayout(self.gridLayout)
+        self.layout.addWidget(self.treeView)
+
+    
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex)
      
     def openMenu(self, position):
-        indexes = self.view.selectedIndexes()
+        indexes = self.treeView.selectedIndexes()
         if len(indexes) > 0:
             level = 0
             index = indexes[0]
@@ -54,23 +58,28 @@ class MainForm(QtGui.QMainWindow):
                 level += 1
         
         menu = QtGui.QMenu()
-        if level == 0:
-            menu.addAction(self.tr("Edit person"))
-        elif level == 1:
-            menu.addAction(self.tr("Edit object/container"))
-        elif level == 2:
-            menu.addAction(self.tr("Edit object"))
-        
-        menu.exec_(self.view.viewport().mapToGlobal(position))
+        menu.addAction(self.tr("Edit object"))
+        menu.addAction(self.tr("Delete object"))
+        menu.exec_(self.treeView.viewport().mapToGlobal(position))
+    
+    def on_treeView_clicked(self, index):
+        indexItem = self.model.index(index.row(), 0, index.parent())
+
+        fileName = self.model.fileName(indexItem)
+        filePath = self.model.filePath(indexItem)
+
+        self.lineEditFileName.setText(fileName)
+        self.lineEditFilePath.setText(filePath)
 
 
 def main():
     app = QtGui.QApplication(sys.argv)
-    form = MainForm()
-    form.setWindowTitle('IPBundler')
-    form.resize(666, 333)
+    app.setApplicationName('IPBundler')
+    form = MyWindow()
+    form.resize(866, 333)
+    form.move(app.desktop().screen().rect().center() - form.rect().center())
     form.show()
-    app.exec_()
+    sys.exit(app.exec_())
 
 if __name__ == '__main__':
     main()
