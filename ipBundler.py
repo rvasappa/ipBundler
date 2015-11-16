@@ -72,7 +72,15 @@ class MyWindow(QtGui.QWidget):
         fileName = self.model.fileName(self.treeView.currentIndex())
         if os.path.isdir (fileName):
             self.treeView.expand(self.treeView.currentIndex())
-        
+        elif os.path.isfile (fileName):
+            print ("-Info- Opening File %s" %(fileName))
+            self.editFile(fileName)
+
+    def editFile(self,efile):
+        os.environ.get('EDITOR') if os.environ.get('EDITOR') else 'gvim'
+        edit_call = [ "gvim",efile]; 
+        edit = subprocess.Popen(edit_call)
+
     def layout(self):
         self.gridLayout = QtGui.QGridLayout()
         self.gridLayout.addWidget(self.labelFileName, 0, 0)
@@ -117,12 +125,6 @@ class MyWindow(QtGui.QWidget):
         else:
             self.status.showMessage("Ready.")
 
-
-
-
-
-
-    
 
     @QtCore.pyqtSlot(QtCore.QModelIndex)
      
