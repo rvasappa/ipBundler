@@ -47,6 +47,10 @@ class MyWindow(QtGui.QWidget):
         self.treeView = QtGui.QTreeView(self)
         self.treeView.setModel(self.model)
         self.treeView.setRootIndex(self.indexRoot)
+        self.treeProps()
+        self.layout()
+
+    def treeProps(self):
         self.treeView.clicked.connect(self.on_treeView_clicked)
         self.treeView.setDragEnabled(True)
         self.treeView.setAcceptDrops(True)
@@ -55,7 +59,10 @@ class MyWindow(QtGui.QWidget):
         self.treeView.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
         self.treeView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.treeView.customContextMenuRequested.connect(self.openMenu)
-        self.layout()
+        self.treeView.doubleClicked.connect(self.addToTreeHere)
+
+    def addToTreeHere(self):
+        print ("Item has been double clicked...")
         
     def layout(self):
         self.gridLayout = QtGui.QGridLayout()
@@ -80,7 +87,7 @@ class MyWindow(QtGui.QWidget):
 
     def refreshTree(self):
         Newpath = self.query.text()
-        if Newpath != self.initpath:
+        if Newpath != self.initpath and os.path.isdir(Newpath):
             print (Newpath)
             self.status.showMessage("Searching...")
 
@@ -94,17 +101,11 @@ class MyWindow(QtGui.QWidget):
             self.treeView = QtGui.QTreeView(self)
             self.treeView.setModel(self.model)
             self.treeView.setRootIndex(self.indexRoot)
-            self.treeView.clicked.connect(self.on_treeView_clicked)
-            self.treeView.setDragEnabled(True)
-            self.treeView.setAcceptDrops(True)
-            self.treeView.setDropIndicatorShown(True)
-            self.treeView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
-            self.treeView.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
-            self.treeView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-            self.treeView.customContextMenuRequested.connect(self.openMenu)
+            self.treeProps()
             self.relayout()
             self.status.showMessage("Ready")
-
+        elif not os.path.isdir(Newpath):
+            self.status.showMessage("-Error- Dude, this directory does not exist")
         else:
             self.status.showMessage("Ready.")
 
