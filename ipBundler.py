@@ -217,12 +217,13 @@ class MyWindow(QtGui.QWidget):
         menu.exec_(self.treeView.viewport().mapToGlobal(position))
     
     def open_treeObj(self):
-        item = self.treeView.currentIndex()
-        item.setCheckState(0, QtCore.Qt.Checked)
-        if item.checkState(0) == QtCore.Qt.Checked:
-            print('item  is checked out')
-        else :
-            print('item  is not checked out')
+        index = self.treeView.selectedIndexes()[0]
+        if (self.model.checkState(index)) < 1:
+            self.model.setData(index,2, 10)
+        else:
+            self.model.setData(index,0, 10)
+
+
 
     def delete_treeObj(self):
         print ("Delete Object")
