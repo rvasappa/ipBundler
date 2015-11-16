@@ -6,6 +6,7 @@ import subprocess
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
+import tarfile
 
 from tickUntickDir import *
  
@@ -286,6 +287,34 @@ class MyWindow(QtGui.QWidget):
 
     def genBundleButton(self):
         print ("Generating Bundle")
+        self.treeView.selectAll()
+        indexA = self.treeView.selectedIndexes()
+        tFile = tarfile.open("ipBundler.tar.gz", 'w:gz')
+        
+        for index in indexA:
+            if (self.model.checkState(index)) > 1:
+                indexItem = self.model.index(index.row(), 0, index.parent())
+                fileName = self.model.fileName(indexItem)
+                filePath = self.model.filePath(indexItem)
+                tFile.add(filePath)
+        
+        if len(tFile.getnames()) > 0:
+            for f in tFile.getnames():
+                print ("Added %s" % f)
+            
+            self.treeView.clearSelection()
+            tFile.close()
+            print ("Finished Generating Bundle, Generated ipBundler.tar.gz")
+            self.status.showMessage("Finished Generating Bundle")
+            self.status.showMessage("Ready")
+                
+
+
+
+
+
+
+
 
 
 def main():
