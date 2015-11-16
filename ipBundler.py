@@ -8,12 +8,14 @@ from PyQt4.QtCore import *
 
 
 from search import SearchThread
+from tickUntickDir import *
 
 
 class MyWindow(QtGui.QWidget):
     def __init__(self, parent=None):
         super(MyWindow, self).__init__(parent)
-        self.model = QtGui.QFileSystemModel(self)
+        #self.model = QtGui.QFileSystemModel(self)
+        self.model  = tickUntickDir() 
         self.status = QtGui.QStatusBar(self)
         self.status.showMessage("Ready")
         self.labelFileName = QtGui.QLabel(self)
@@ -115,9 +117,9 @@ class MyWindow(QtGui.QWidget):
     def setMarkStyle(self):
         self.treeView.setStyleSheet("""
             
-            QTreeView::item:active {
+            QTreeView::item:selected {
                 border: 1px solid red;
-                background: red;
+                background: green;
             }   
         """)
     def treeProps(self):
@@ -215,12 +217,13 @@ class MyWindow(QtGui.QWidget):
         menu.exec_(self.treeView.viewport().mapToGlobal(position))
     
     def open_treeObj(self):
-        indexes = self.treeView.selectedIndexes()
-        index = indexes[0]
-        self.on_treeView_clicked(index)
-        indexItem = self.model.index(index.row(), 0, index.parent())
-        print (indexItem)
-    
+        item = self.treeView.currentIndex()
+        item.setCheckState(0, QtCore.Qt.Checked)
+        if item.checkState(0) == QtCore.Qt.Checked:
+            print('item  is checked out')
+        else :
+            print('item  is not checked out')
+
     def delete_treeObj(self):
         print ("Delete Object")
         root = self.treeView.invisibleRootItem()
