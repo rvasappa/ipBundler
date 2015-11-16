@@ -9,7 +9,20 @@ from PyQt4.QtCore import *
 
 from search import SearchThread
 from tickUntickDir import *
+ 
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
 
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class MyWindow(QtGui.QWidget):
     def __init__(self, parent=None):
@@ -37,6 +50,18 @@ class MyWindow(QtGui.QWidget):
         self.buttonFileSearch.clicked.connect(self.searchButton)
         self.query.returnPressed.connect(self.buttonFileSearch.click)
         self.query.setFocus()
+
+        self.buttonGenBundle = QtGui.QPushButton(self)
+        self.buttonGenBundle.setText("Generate Bundle")
+        self.buttonGenBundle.clicked.connect(self.genBundleButton)
+        
+        self.labelselectAllCB = QtGui.QLabel(self)
+        self.labelselectAllCB.setText("SelectAll")
+        self.selectAllCB = QtGui.QCheckBox(self)
+        self.selectAllCB.setGeometry(QtCore.QRect(50, 390, 71, 21))
+        self.selectAllCB.setObjectName(_fromUtf8("SelectAll"))
+        self.selectAllCB.clicked.connect(self.selectAll)
+        
         path = self.query.text()
         self.initpath = path
         self.initTree()
@@ -112,6 +137,7 @@ class MyWindow(QtGui.QWidget):
             QTreeView::branch:open:has-children:!has-siblings {
                 background: green;
             }
+            QLineEdit { background: yellow }
         """)
 
     def setMarkStyle(self):
@@ -139,7 +165,6 @@ class MyWindow(QtGui.QWidget):
         self.treeView.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def addToTreeHere(self):
-        print ("Item has been double clicked...")
         self.treeView.expand(self.treeView.currentIndex())
         fileName = self.model.fileName(self.treeView.currentIndex())
         filePath = self.model.filePath(self.treeView.currentIndex())
@@ -160,7 +185,10 @@ class MyWindow(QtGui.QWidget):
         self.gridLayout.addWidget(self.query, 0, 1)
         self.gridLayout.addWidget(self.labelFilePath, 1, 0)
         self.gridLayout.addWidget(self.lineEditFilePath, 1, 1)
+        self.gridLayout.addWidget(self.labelselectAllCB, 0, 2)
+        self.gridLayout.addWidget(self.selectAllCB, 0, 3)
         self.gridLayout.addWidget(self.buttonFileSearch, 1, 2)
+        self.gridLayout.addWidget(self.buttonGenBundle, 1, 3)
         self.layout = QtGui.QVBoxLayout(self)
         self.layout.addLayout(self.gridLayout)
         self.layout.addWidget(self.treeView)
@@ -235,12 +263,30 @@ class MyWindow(QtGui.QWidget):
         indexItem = self.model.index(index.row(), 0, index.parent())
         fileName = self.model.fileName(indexItem)
         filePath = self.model.filePath(indexItem)
-        print (fileName)
 
+    def selectAll(self):
+        if self.selectAllCB.isChecked():
+            self.treeView.selectAll()
+            indexA = self.treeView.selectedIndexes()
+            for index in indexA:
+                if (self.model.checkState(index)) < 1:
+                    self.model.setData(index,2, 10)
+                    self.treeView.clearSelection()
+
+        else:
+            self.treeView.selectAll()
+            indexA = self.treeView.selectedIndexes()
+            for index in indexA:
+                if (self.model.checkState(index)) > 1:
+                    self.model.setData(index,0, 10)
+                    self.treeView.clearSelection()
 
     def searchButton(self):
         print ("Starting Search")
         self.refreshTree()
+
+    def genBundleButton(self):
+        print ("Generating Bundle")
 
 
 def main():
