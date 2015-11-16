@@ -32,10 +32,16 @@ class MyWindow(QtGui.QWidget):
         #self.model = QtGui.QFileSystemModel(self)
         self.model  = tickUntickDir() 
         self.status = QtGui.QStatusBar(self)
+
+        self.palette = QtGui.QPalette()
+        self.palette.setColor(QtGui.QPalette.Foreground,QtCore.Qt.green)
         self.status.showMessage("Ready")
+        self.status.setPalette(self.palette)
         self.labelFileName = QtGui.QLabel(self)
         self.labelFileName.setText("Directory Name:")
+        self.labelFileName.setPalette(self.palette)
         self.query = QtGui.QLineEdit(self)
+
      
         """
             Default is to start in user current directory
@@ -46,6 +52,8 @@ class MyWindow(QtGui.QWidget):
         self.labelFilePath = QtGui.QLabel(self)
         self.labelFilePath.setText("Search Pattern:")
         self.lineEditFilePath = QtGui.QLineEdit(self)
+        self.lineEditFilePath.setDisabled(True)
+        self.labelFilePath.setPalette(self.palette)
         
         self.buttonFileSearch = QtGui.QPushButton(self)
         self.buttonFileSearch.setText("Search")
@@ -59,6 +67,7 @@ class MyWindow(QtGui.QWidget):
         
         self.labelselectAllCB = QtGui.QLabel(self)
         self.labelselectAllCB.setText("SelectAll")
+        self.labelselectAllCB.setPalette(self.palette)
         self.selectAllCB = QtGui.QCheckBox(self)
         self.selectAllCB.setGeometry(QtCore.QRect(50, 390, 71, 21))
         self.selectAllCB.setObjectName(_fromUtf8("SelectAll"))
@@ -79,7 +88,7 @@ class MyWindow(QtGui.QWidget):
         self.treeProps()
         self.layout()
         self.setStyle()
-    
+
     def setStyle(self):
         self.treeView.setStyleSheet("""
             QTreeView {
@@ -196,6 +205,7 @@ class MyWindow(QtGui.QWidget):
         self.layout.addWidget(self.treeView)
         self.layout.addWidget(self.status)
         QShortcut(QKeySequence("Ctrl+Q"), self, self.close)
+    
 
 
     def relayout(self):
@@ -319,6 +329,9 @@ def main():
     app = QtGui.QApplication(sys.argv)
     app.setApplicationName('IPBundler')
     form = MyWindow()
+    palette = QtGui.QPalette()
+    palette.setColor(QtGui.QPalette.Background,QtCore.Qt.black)
+    form.setPalette(palette)
     form.resize(866, 333)
     form.move(app.desktop().screen().rect().center() - form.rect().center())
     form.show()
