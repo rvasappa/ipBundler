@@ -64,6 +64,8 @@ class MyWindow(QtGui.QWidget):
         self.buttonGenBundle = QtGui.QPushButton(self)
         self.buttonGenBundle.setText("Generate Bundle")
         self.buttonGenBundle.clicked.connect(self.genBundleButton)
+        self.buttonGenBundle.setStyleSheet("background-color: cyan")
+        self.buttonGenBundle.setIcon(QtGui.QIcon('icons/tar-gz.png'))
         
         self.labelselectAllCB = QtGui.QLabel(self)
         self.labelselectAllCB.setText("SelectAll")
@@ -299,16 +301,16 @@ class MyWindow(QtGui.QWidget):
 
     def genBundleButton(self):
         print ("Generating Bundle")
-        self.treeView.selectAll()
         indexA = self.treeView.selectedIndexes()
-        tarBallInput = InputDialog(self, title="Enter Tar Bundle Name", label="Tarball Name", text="")
-        tarBallInput.exec_()
-        tarBall = tarBallInput.text.text()
-        if (len(tarBall) > 0): 
+        if (self.model.checkState(indexA[0]) > 1):
+            self.treeView.selectAll()
+            tarBallInput = InputDialog(self, title="Enter Tar Bundle Name", label="Tarball Name", text="")
+            tarBallInput.exec_()
+            tarBall = tarBallInput.text.text()
             tFile = tarfile.open(tarBall, 'w:gz')
             
             for index in indexA:
-                if (self.model.checkState(index)) > 1:
+                if (self.model.checkState(index)) >= 1:
                     indexItem = self.model.index(index.row(), 0, index.parent())
                     fileName = self.model.fileName(indexItem)
                     filePath = self.model.filePath(indexItem)
