@@ -9,6 +9,8 @@ from PyQt4.QtCore import *
 import tarfile
 
 from tickUntickDir import *
+from InputDialog import *
+
  
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -289,33 +291,29 @@ class MyWindow(QtGui.QWidget):
         print ("Generating Bundle")
         self.treeView.selectAll()
         indexA = self.treeView.selectedIndexes()
-        tFile = tarfile.open("ipBundler.tar.gz", 'w:gz')
-        
-        for index in indexA:
-            if (self.model.checkState(index)) > 1:
-                indexItem = self.model.index(index.row(), 0, index.parent())
-                fileName = self.model.fileName(indexItem)
-                filePath = self.model.filePath(indexItem)
-                tFile.add(filePath)
-        
-        if len(tFile.getnames()) > 0:
-            for f in tFile.getnames():
-                print ("Added %s" % f)
+        tarBallInput = InputDialog(self, title="Enter Tar Bundle Name", label="Tarball Name", text="")
+        tarBallInput.exec_()
+        tarBall = tarBallInput.text.text()
+        if (len(tarBall) > 0): 
+            tFile = tarfile.open(tarBall, 'w:gz')
             
-            self.treeView.clearSelection()
-            tFile.close()
-            print ("Finished Generating Bundle, Generated ipBundler.tar.gz")
-            self.status.showMessage("Finished Generating Bundle")
-            self.status.showMessage("Ready")
+            for index in indexA:
+                if (self.model.checkState(index)) > 1:
+                    indexItem = self.model.index(index.row(), 0, index.parent())
+                    fileName = self.model.fileName(indexItem)
+                    filePath = self.model.filePath(indexItem)
+                    tFile.add(filePath)
+            
+            if len(tFile.getnames()) > 0:
+                for f in tFile.getnames():
+                    print ("Added %s" % f)
                 
-
-
-
-
-
-
-
-
+                self.treeView.clearSelection()
+                tFile.close()
+                print ("Finished Generating Bundle, Generated %s" %(tarBall))
+                self.status.showMessage("Finished Generating Bundle")
+                self.status.showMessage("Ready")
+                
 
 def main():
     app = QtGui.QApplication(sys.argv)
