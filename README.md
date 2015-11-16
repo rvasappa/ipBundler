@@ -16,9 +16,20 @@ IPBundler is a Python-QT Based file query system and automatic bundler, it works
 
 ### Todo
 
-Pattern based search and file filtering (currently having software limitation, using a windows machine for development)
-configurable column addition in QtreeView widget
+** Pattern based search and file filtering (currently having software limitation, using a windows machine for development)
+** configurable column addition in QtreeView widget
+
+### Build Requirements
+
+** Please ignore if you have a working version of python + pyQt4 installed and working on your machine, if not please
+   follow the below instructions :
+
+1. Working in linux is heaven and windows suck, prefer not to use windows for testing this.
+2. Build Python 3.4.3
+3. Preferable to have 4.8.4 QT Built and working
+4. Once you have 2 & 3 in place, Please additionally download and install sip & pyqt4
+5. clone the repo and boom!
 
 
 ### Help
-raghuram002@gmail.com
+for bugs, please write to raghuram002@gmail.com
