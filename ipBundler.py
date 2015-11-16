@@ -19,7 +19,7 @@ class MyWindow(QtGui.QWidget):
         self.labelFileName = QtGui.QLabel(self)
         self.labelFileName.setText("Directory Name:")
         self.query = QtGui.QLineEdit(self)
-        
+     
         """
             Default is to start in user current directory
         """
@@ -49,7 +49,77 @@ class MyWindow(QtGui.QWidget):
         self.treeView.setRootIndex(self.indexRoot)
         self.treeProps()
         self.layout()
+        self.setStyle()
+    
+    def setStyle(self):
+        self.treeView.setStyleSheet("""
+            QTreeView {
+                show-decoration-selected: 1;
+            }
 
+            QTreeView::item {
+                border: 1px solid #d9d9d9;
+                border-top-color: transparent;
+                border-bottom-color: transparent;
+            }
+
+            QTreeView::item:hover {
+                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);
+                border: 1px solid #bfcde4;
+            }
+
+            QTreeView::item:selected {
+                border: 1px solid #567dbc;
+            }
+
+            QTreeView::item:selected:active{
+                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);
+            }
+
+            QTreeView::item:selected:!active {
+                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6b9be8, stop: 1 #577fbf);
+            }
+            QTreeView::branch {
+                background: palette(base);
+            }
+
+            QTreeView::branch:has-siblings:!adjoins-item {
+                background: cyan;
+            }
+
+            QTreeView::branch:has-siblings:adjoins-item {
+                background: red;
+            }
+
+            QTreeView::branch:!has-children:!has-siblings:adjoins-item {
+                background: blue;
+            }
+
+            QTreeView::branch:closed:has-children:has-siblings {
+                background: pink;
+            }
+
+            QTreeView::branch:has-children:!has-siblings:closed {
+                background: orange;
+            }
+
+            QTreeView::branch:open:has-children:has-siblings {
+                background: violet;
+            }
+
+            QTreeView::branch:open:has-children:!has-siblings {
+                background: green;
+            }
+        """)
+
+    def setMarkStyle(self):
+        self.treeView.setStyleSheet("""
+            
+            QTreeView::item:active {
+                border: 1px solid red;
+                background: red;
+            }   
+        """)
     def treeProps(self):
         self.treeView.clicked.connect(self.on_treeView_clicked)
         self.treeView.setDragEnabled(True)
@@ -70,11 +140,12 @@ class MyWindow(QtGui.QWidget):
         print ("Item has been double clicked...")
         self.treeView.expand(self.treeView.currentIndex())
         fileName = self.model.fileName(self.treeView.currentIndex())
+        filePath = self.model.filePath(self.treeView.currentIndex())
         if os.path.isdir (fileName):
             self.treeView.expand(self.treeView.currentIndex())
-        elif os.path.isfile (fileName):
-            print ("-Info- Opening File %s" %(fileName))
-            self.editFile(fileName)
+        elif os.path.isfile (filePath):
+            print ("-Info- Opening File %s" %(filePath))
+            self.editFile(filePath)
 
     def editFile(self,efile):
         os.environ.get('EDITOR') if os.environ.get('EDITOR') else 'gvim'
@@ -119,6 +190,7 @@ class MyWindow(QtGui.QWidget):
             self.treeView.setRootIndex(self.indexRoot)
             self.treeProps()
             self.relayout()
+            self.setStyle()
             self.status.showMessage("Ready")
         elif not os.path.isdir(Newpath):
             self.status.showMessage("-Error- Dude, this directory does not exist and you have increased my paranoia!")
@@ -135,16 +207,19 @@ class MyWindow(QtGui.QWidget):
             index = indexes[0]
             while index.parent().isValid():
                 index = index.parent()
+                self.selIndex = index
                 level += 1
         
         menu = QtGui.QMenu()
-        menu.addAction("Open", self.open_treeObj)
-        menu.addAction("Delete", self.delete_treeObj)
+        menu.addAction("Mark/Unmark", self.open_treeObj)
         menu.exec_(self.treeView.viewport().mapToGlobal(position))
     
     def open_treeObj(self):
-        print ("Open Object")
-        self.ff.show()
+        indexes = self.treeView.selectedIndexes()
+        index = indexes[0]
+        self.on_treeView_clicked(index)
+        indexItem = self.model.index(index.row(), 0, index.parent())
+        print (indexItem)
     
     def delete_treeObj(self):
         print ("Delete Object")
@@ -156,6 +231,7 @@ class MyWindow(QtGui.QWidget):
         indexItem = self.model.index(index.row(), 0, index.parent())
         fileName = self.model.fileName(indexItem)
         filePath = self.model.filePath(indexItem)
+        print (fileName)
 
 
     def searchButton(self):
