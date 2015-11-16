@@ -60,14 +60,18 @@ class MyWindow(QtGui.QWidget):
         self.treeView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.treeView.customContextMenuRequested.connect(self.openMenu)
         self.treeView.doubleClicked.connect(self.addToTreeHere)
-        self.treeView.setSortingEnabled(False)
+        self.treeView.setSortingEnabled(True)
         self.treeView.expandsOnDoubleClick()
+        self.treeView.setAlternatingRowColors(True)
         self.treeView.setColumnWidth(0, 200)
+        self.treeView.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def addToTreeHere(self):
         print ("Item has been double clicked...")
-
         self.treeView.expand(self.treeView.currentIndex())
+        fileName = self.model.fileName(self.treeView.currentIndex())
+        if os.path.isdir (fileName):
+            self.treeView.expand(self.treeView.currentIndex())
         
     def layout(self):
         self.gridLayout = QtGui.QGridLayout()
