@@ -7,7 +7,6 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 
-from search import SearchThread
 from tickUntickDir import *
  
 try:
