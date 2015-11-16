@@ -104,8 +104,7 @@ class MyWindow(QtGui.QWidget):
             self.relayout()
             self.status.showMessage("Ready")
         elif not os.path.isdir(Newpath):
-            self.status.showMessage("-Error- Dude, this directory does not exist
-                    and you have increased my paranoia!")
+            self.status.showMessage("-Error- Dude, this directory does not exist and you have increased my paranoia!")
         else:
             self.status.showMessage("Ready.")
 
