@@ -90,7 +90,6 @@ class MyWindow(QtGui.QWidget):
         if Newpath != self.initpath and os.path.isdir(Newpath):
             print (Newpath)
             self.status.showMessage("Searching...")
-
             self.treeView.deleteLater()
             self.treeView.setParent(None)
             self.status.setParent(None)
@@ -105,7 +104,8 @@ class MyWindow(QtGui.QWidget):
             self.relayout()
             self.status.showMessage("Ready")
         elif not os.path.isdir(Newpath):
-            self.status.showMessage("-Error- Dude, this directory does not exist")
+            self.status.showMessage("-Error- Dude, this directory does not exist
+                    and you have increased my paranoia!")
         else:
             self.status.showMessage("Ready.")
 
