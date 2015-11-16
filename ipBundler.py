@@ -60,7 +60,8 @@ class MyWindow(QtGui.QWidget):
         self.treeView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.treeView.customContextMenuRequested.connect(self.openMenu)
         self.treeView.doubleClicked.connect(self.addToTreeHere)
-        self.treeView.setExpandsOnDoubleClick(enable)
+        self.treeView.setSortingEnabled(True)
+        self.treeView.expandsOnDoubleClick()
 
     def addToTreeHere(self):
         print ("Item has been double clicked...")
