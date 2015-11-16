@@ -88,7 +88,7 @@ class MyWindow(QtGui.QWidget):
             }
 
             QTreeView::branch:has-siblings:adjoins-item {
-                background: red;
+                background: orange;
             }
 
             QTreeView::branch:!has-children:!has-siblings:adjoins-item {
@@ -96,11 +96,11 @@ class MyWindow(QtGui.QWidget):
             }
 
             QTreeView::branch:closed:has-children:has-siblings {
-                background: pink;
+                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #33cc33, stop: 1 #33cc33); ;
             }
 
             QTreeView::branch:has-children:!has-siblings:closed {
-                background: orange;
+                background: purple;
             }
 
             QTreeView::branch:open:has-children:has-siblings {
