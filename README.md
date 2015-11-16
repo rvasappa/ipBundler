@@ -9,6 +9,8 @@ IPBundler is a Python-QT Based file query system and automatic bundler, it works
 
 Usage Scenarios
 
+![StartWindow](https://github.com/rvasappa/ipBundler/blob/master/img/StartWin.png)
+
 Todo
 
 Pattern based search and file filtering (currently having software limitation, using a windows machine for development)
