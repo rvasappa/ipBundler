@@ -301,9 +301,9 @@ class MyWindow(QtGui.QWidget):
 
     def genBundleButton(self):
         print ("Generating Bundle")
+        self.treeView.selectAll()
         indexA = self.treeView.selectedIndexes()
         if (self.model.checkState(indexA[0]) > 1):
-            self.treeView.selectAll()
             tarBallInput = InputDialog(self, title="Enter Tar Bundle Name", label="Tarball Name", text="")
             tarBallInput.exec_()
             tarBall = tarBallInput.text.text()
@@ -325,7 +325,8 @@ class MyWindow(QtGui.QWidget):
                 print ("Finished Generating Bundle, Generated %s" %(tarBall))
                 self.status.showMessage("Finished Generating Bundle")
                 self.status.showMessage("Ready")
-                
+        else:
+            self.treeView.clearSelection()
 
 def main():
     app = QtGui.QApplication(sys.argv)
